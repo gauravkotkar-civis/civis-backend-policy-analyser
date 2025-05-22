@@ -1,9 +1,8 @@
 import  contextlib
 import os
-from typing import Annotated, AsyncIterator
+from typing import AsyncIterator, Annotated
 
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
@@ -18,8 +17,8 @@ class DatabaseSessionManager:
 
     def __init__(self):
         db_url = DB_BASE_URL.format(
-            db_user=os.getenv("DB_USER"),
-            db_secret=os.getenv("DB_SECRET"),
+            db_user="ffg",  #  os.getenv("DB_USER"),
+            db_secret="ffg_jpmc_civis",  #  os.getenv("DB_SECRET"),
             db_port=DB_PORT,
             database_name=DB_NAME
         )

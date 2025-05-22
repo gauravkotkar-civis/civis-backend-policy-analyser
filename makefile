@@ -23,7 +23,7 @@ lock: uv ## lock dependencies
 
 .PHONY: install
 install: uv ## Install dependencies
-	uv sync --frozen
+	uv sync --frozen --active
 
 .PHONY: test
 test:  ## Run tests

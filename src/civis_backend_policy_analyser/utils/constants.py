@@ -1,3 +1,3 @@
-DB_BASE_URL = "postgresql+asyncpg://{db_user}:{db_secret}@localhost:{port}/{database_name}"
+DB_BASE_URL = "postgresql+asyncpg://{db_user}:{db_secret}@localhost:{db_port}/{database_name}"
 DB_PORT = 5432
-DB_NAME = "postgres"
+DB_NAME = "civis"

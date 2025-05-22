@@ -5,7 +5,9 @@ import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from fastapi_project.core.db_connection import sessionmanager
+from civis_backend_policy_analyser.core.db_connection import sessionmanager
+from civis_backend_policy_analyser.api.document_type_router import document_type_router
+from civis_backend_policy_analyser.api.assessment_area_router import assessment_area_router
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -30,8 +32,9 @@ async def root():
     return {"message": "Backend is running."}
 
 
-# app.include_router()
+app.include_router(document_type_router)
+app.include_router(assessment_area_router)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8000)
+    uvicorn.run("civis_backend_policy_analyser.api.app:app", host="0.0.0.0", reload=True, port=8000)
