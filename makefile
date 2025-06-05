@@ -1,19 +1,20 @@
-#!/usr/bin/env bash
-SHELL := /usr/bin/bash
-VIRTUAL_ENV = .civis
+#!/usr/bin/env -S uv run
+SHELL:=/usr/bin/bash
+VIRTUAL_ENV:=.civis
+
 
 ##@ Utility
 .PHONY: help
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make <target>\033[36m\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+
 .PHONY: venv
 venv: uv
 	uv venv --python 3.12.3 ${VIRTUAL_ENV}; \
-	source ${VIRTUAL_ENV}/bin/activate; \
-	uv lock; \
+	uv lock --active; \
 	make install && make dev; \
-	uv pip compile pyproject.toml -o requirements.txt
+	uv pip compile pyproject.toml -o requirements.txt  --active
 
 .PHONY: uv
 uv:  ## Install uv if it's not present.
@@ -22,8 +23,7 @@ uv:  ## Install uv if it's not present.
 
 .PHONY: dev
 dev: uv ## Install dev dependencies
-	source ${VIRTUAL_ENV}/bin/activate;
-	uv sync --dev
+	uv sync --dev --active --system-site-packages false; \
 
 .PHONY: lock
 lock: uv ## lock dependencies
@@ -31,22 +31,17 @@ lock: uv ## lock dependencies
 
 .PHONY: install
 install: uv ## Install dependencies
-	source ${VIRTUAL_ENV}/bin/activate;
-	uv sync --active
+	@source ${VIRTUAL_ENV}/bin/activate && uv sync --active;
 
 .PHONY: test
 test:  ## Run tests
-	uv run pytest
+	uv run pytest --active
 
 .PHONY: lint
 lint:  ## Run linters
 	uv run ruff check ./src ./tests
-
-.PHONY: fix
-fix:  ## Fix lint errors
-	uv run ruff check ./src ./tests --fix
 	uv run ruff format ./src ./tests
 
 .PHONY: cov
 cov: ## Run tests with coverage
-	uv run pytest --cov=src --cov-report=term-missing
+	uv run pytest --cov=src --cov-report=term-missing --active

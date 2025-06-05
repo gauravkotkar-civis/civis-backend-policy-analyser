@@ -22,7 +22,37 @@ dev = [
     "ruff>=0.11.6",
 ]
 
+
 [tool.ruff.lint]
+ignore-init-module-imports = false
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
 ignore = [
     "E501"  # Line is Too Long
 ]
@@ -40,3 +70,23 @@ select = [
     # isort
     "I",
 ]
+# Assume Python >3.9
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+# 5. Use single quotes in `ruff format`.
+quote-style = "single"
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+combine-as-imports = true
+detect-same-package = false
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402", "F403"]
+"src/civis_backend_policy_analyser/alembic/*" = ["UP035", "I001", "UP007"]

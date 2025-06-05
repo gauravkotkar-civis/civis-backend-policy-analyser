@@ -1,26 +1,25 @@
-import  contextlib
-import os
-from typing import AsyncIterator, Annotated
+import contextlib
+from collections.abc import AsyncIterator
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_sessionmaker,
     AsyncConnection,
     AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
 )
 
-from civis_backend_policy_analyser.utils.constants import DB_BASE_URL, DB_PORT, DB_NAME
+from civis_backend_policy_analyser.utils.constants import DB_BASE_URL, DB_NAME, DB_PORT
 
 
 class DatabaseSessionManager:
-
     def __init__(self):
         db_url = DB_BASE_URL.format(
-            db_user="ffg",  #  os.getenv("DB_USER"),
-            db_secret="ffg_jpmc_civis",  #  os.getenv("DB_SECRET"),
+            db_user='ffg',  #  os.getenv("DB_USER"),
+            db_secret='ffg_jpmc_civis',  #  os.getenv("DB_SECRET"),
             db_port=DB_PORT,
-            database_name=DB_NAME
+            database_name=DB_NAME,
         )
         engine_keywords = {}
         self._engine = create_async_engine(db_url, **engine_keywords)
@@ -28,7 +27,7 @@ class DatabaseSessionManager:
 
     async def close(self):
         if self._engine is None:
-            raise Exception("DatabaseSessionManager is not initialized")
+            raise Exception('DatabaseSessionManager is not initialized')
         await self._engine.dispose()
 
         self._engine = None
@@ -37,7 +36,7 @@ class DatabaseSessionManager:
     @contextlib.asynccontextmanager
     async def connect(self) -> AsyncIterator[AsyncConnection]:
         if self._engine is None:
-            raise Exception("DatabaseSessionManager is not initialized")
+            raise Exception('DatabaseSessionManager is not initialized')
 
         async with self._engine.begin() as connection:
             try:
@@ -49,7 +48,7 @@ class DatabaseSessionManager:
     @contextlib.asynccontextmanager
     async def session(self) -> AsyncIterator[AsyncSession]:
         if self._sessionmaker is None:
-            raise Exception("DatabaseSessionManager is not initialized")
+            raise Exception('DatabaseSessionManager is not initialized')
 
         session = self._sessionmaker()
         try:
@@ -62,6 +61,7 @@ class DatabaseSessionManager:
 
 
 sessionmanager = DatabaseSessionManager()
+
 
 async def get_db_session():
     async with sessionmanager.session() as session:

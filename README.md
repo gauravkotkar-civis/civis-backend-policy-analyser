@@ -56,6 +56,7 @@ $ alembic upgrade head
 
 ```
 export PYTHONPATH=/home/user/civi-backend-policy-analyser/src:$PYTHONPATH
+source .civis/bin/activate
 cd src;
 python -m civis_backend_policy_analyser.api.app
 ```
