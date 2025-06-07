@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, Integer, String, Text, TIMESTAMP, func
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from civis_backend_policy_analyser.models.base import Base
 
@@ -6,10 +7,10 @@ from civis_backend_policy_analyser.models.base import Base
 class AssessmentArea(Base):
     __tablename__ = 'assessment_area'
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
-    assessment_title: Mapped[str] = mapped_column(
-        index=True, unique=True, nullable=False
-    )
-
-    def __repr__(self) -> str:
-        return f'AssessmentArea(assessment_title={self.assessment_title})'
+    assessment_id = Column(Integer, primary_key=True, autoincrement=True)
+    assessment_name = Column(String(255), nullable=False)
+    description = Column(Text)
+    created_by = Column(String(100))
+    created_on = Column(TIMESTAMP, default=func.now())
+    updated_by = Column(String(100))
+    updated_on = Column(TIMESTAMP, default=func.now(), onupdate=func.now())
