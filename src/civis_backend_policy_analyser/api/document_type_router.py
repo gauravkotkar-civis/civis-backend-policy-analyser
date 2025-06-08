@@ -2,7 +2,9 @@ from fastapi import APIRouter
 
 from civis_backend_policy_analyser.core.db_connection import DBSessionDep
 from civis_backend_policy_analyser.schemas.document_type_schema import (
-    DocumentTypeSchema,
+    DocumentTypeCreate,
+    DocumentTypeOut,
+    DocumentTypeUpdate,
 )
 from civis_backend_policy_analyser.views.document_type_view import DocumentTypeView
 
@@ -15,7 +17,7 @@ document_type_router = APIRouter(
 
 @document_type_router.get(
     '/',
-    response_model=list[DocumentTypeSchema],
+    response_model=list[DocumentTypeOut],
 )
 async def get_all_document_types(
     db_session: DBSessionDep,
@@ -24,13 +26,13 @@ async def get_all_document_types(
     Get all the document types in json format.
     """
     document_service = DocumentTypeView(db_session)
-    document_types = await document_service.all()
+    document_types = await document_service.all_document_types()
     return document_types
 
 
 @document_type_router.get(
     '/{document_type_id}',
-    response_model=list[DocumentTypeSchema],
+    response_model=list[DocumentTypeOut],
 )
 async def get_document_type(
     document_type_id: int,
@@ -46,50 +48,49 @@ async def get_document_type(
 
 @document_type_router.post(
     '/',
-    response_model=DocumentTypeSchema,
+    response_model=DocumentTypeOut,
 )
-async def create_assessment_area(
-    assessment_area: DocumentTypeSchema,
+async def create_document_type(
+    document_type: DocumentTypeCreate,
     db_session: DBSessionDep,
 ):
     """
     Create a new assessment area.
     """
     document_service = DocumentTypeView(db_session)
-    created_document_type = await document_service.create(assessment_area)
+    created_document_type = await document_service.create(document_type)
     return created_document_type
 
-
 @document_type_router.put(
-    '/{assessment_area_id}',
-    response_model=DocumentTypeSchema,
+    '/{document_type_id}',
+    response_model=DocumentTypeOut,
 )
-async def update_assessment_area(
-    assessment_area_id: int,
-    assessment_area: DocumentTypeSchema,
+async def update_document_type(
+    document_type_id: int,
+    document_type: DocumentTypeUpdate,
     db_session: DBSessionDep,
 ):
     """
-    Update an existing assessment area.
+    Update an existing document type.
     """
     document_service = DocumentTypeView(db_session)
     updated_document_type = await document_service.update(
-        assessment_area_id, assessment_area
+        document_type_id, document_type
     )
     return updated_document_type
 
 
 @document_type_router.delete(
-    '/{assessment_area_id}',
+    '/{document_type_id}',
     response_model=dict,
 )
-async def delete_assessment_area(
-    assessment_area_id: int,
+async def delete_document_type(
+    document_type_id: int,
     db_session: DBSessionDep,
 ):
     """
-    Delete an assessment area.
+    Delete a document type.
     """
     document_service = DocumentTypeView(db_session)
-    response = await document_service.delete(assessment_area_id)
+    response = await document_service.delete(document_type_id)
     return response
