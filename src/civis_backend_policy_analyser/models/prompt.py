@@ -1,3 +1,4 @@
+from civis_backend_policy_analyser.models.assessment_area_prompt import AssessmentAreaPrompt
 from civis_backend_policy_analyser.models.base import Base
 from sqlalchemy import Column, Integer, String, Text, TIMESTAMP, func, Identity
 from sqlalchemy.orm import relationship
@@ -12,3 +13,9 @@ class Prompt(Base):
     created_on = Column(TIMESTAMP, default=func.now())
     updated_by = Column(String(100))
     updated_on = Column(TIMESTAMP, default=func.now(), onupdate=func.now())
+
+    assessment_areas = relationship(
+        "AssessmentArea",
+        secondary=AssessmentAreaPrompt.__table__,
+        back_populates="prompts"
+    )
