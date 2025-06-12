@@ -2,7 +2,9 @@ from fastapi import APIRouter
 
 from civis_backend_policy_analyser.core.db_connection import DBSessionDep
 from civis_backend_policy_analyser.schemas.assessment_area_schema import (
-    AssessmentAreaSchema,
+    AssessmentAreaCreate,
+    AssessmentAreaOut,
+    AssessmentAreaUpdate,
 )
 from civis_backend_policy_analyser.views.assessment_area_view import AssessmentAreaView
 
@@ -15,7 +17,7 @@ assessment_area_router = APIRouter(
 
 @assessment_area_router.get(
     '/',
-    response_model=list[AssessmentAreaSchema],
+    response_model=list[AssessmentAreaOut],
 )
 async def get_assessment_areas(
     db_session: DBSessionDep,
@@ -24,17 +26,17 @@ async def get_assessment_areas(
     Get all assessment areas in json format.
     """
     assessment_area_service = AssessmentAreaView(db_session)
-    assessment_areas = await assessment_area_service.all()
+    assessment_areas = await assessment_area_service.all_assessment_areas()
     return assessment_areas
 
 
 @assessment_area_router.post(
     '/',
-    response_model=AssessmentAreaSchema,
+    response_model=AssessmentAreaOut,
     status_code=201,
 )
 async def create_assessment_area(
-    assessment_area: AssessmentAreaSchema,
+    assessment_area: AssessmentAreaCreate,
     db_session: DBSessionDep,
 ):
     """
@@ -47,11 +49,11 @@ async def create_assessment_area(
 
 @assessment_area_router.put(
     "/{assessment_area_id}",
-    response_model=AssessmentAreaSchema,
+    response_model=AssessmentAreaOut,
 )
 async def update_assessment_area(
     assessment_area_id: int,
-    assessment_area: AssessmentAreaSchema,
+    assessment_area: AssessmentAreaUpdate,
     db_session: DBSessionDep,
 ):
     """

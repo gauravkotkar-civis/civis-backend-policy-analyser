@@ -1,15 +1,37 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Column, Integer, String, Text, TIMESTAMP, func
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
+from civis_backend_policy_analyser.models.assessment_area_prompt import AssessmentAreaPrompt
 from civis_backend_policy_analyser.models.base import Base
+from civis_backend_policy_analyser.models.document_type_assessment_area import DocumentTypeAssessmentArea
 
 
 class AssessmentArea(Base):
     __tablename__ = 'assessment_area'
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, index=True)
-    assessment_title: Mapped[str] = mapped_column(
-        index=True, unique=True, nullable=False
+    assessment_id = Column(Integer, primary_key=True, autoincrement=True)
+    assessment_name = Column(String(255), nullable=False)
+    description = Column(Text)
+    created_by = Column(String(100))
+    created_on = Column(TIMESTAMP, default=func.now())
+    updated_by = Column(String(100))
+    updated_on = Column(TIMESTAMP, default=func.now(), onupdate=func.now())
+
+    document_types = relationship(
+        "DocumentType",
+        secondary=DocumentTypeAssessmentArea,
+        back_populates="assessment_areas"
     )
 
-    def __repr__(self) -> str:
-        return f'AssessmentArea(assessment_title={self.assessment_title})'
+    prompts = relationship( 
+        "Prompt",
+        secondary=AssessmentAreaPrompt.__table__, 
+        back_populates="assessment_areas"
+    )
+
+    @property
+    def prompt_ids(self) -> list[int]:
+        # Return list of IDs only if relationship is loaded
+        if 'prompts' not in self.__dict__:
+            return []
+        return [p.prompt_id for p in self.prompts]
