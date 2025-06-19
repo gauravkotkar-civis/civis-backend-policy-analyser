@@ -10,17 +10,14 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from civis_backend_policy_analyser.utils.constants import DB_BASE_URL, DB_NAME, DB_PORT
+from civis_backend_policy_analyser.utils.constants import (
+    DB_BASE_URL, DEFAULT_DRIVER
+)
 
 
 class DatabaseSessionManager:
     def __init__(self):
-        db_url = DB_BASE_URL.format(
-            db_user='ffg',  #  os.getenv("DB_USER"),
-            db_secret='ffg_jpmc_civis',  #  os.getenv("DB_SECRET"),
-            db_port=DB_PORT,
-            database_name=DB_NAME,
-        )
+        self.db_url = DB_BASE_URL.format(driver_name=DEFAULT_DRIVER)
         engine_keywords = {}
         self._engine = create_async_engine(db_url, **engine_keywords)
         self._sessionmaker = async_sessionmaker(autocommit=False, bind=self._engine)
